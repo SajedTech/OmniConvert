@@ -74,7 +74,8 @@ const dynamicRuntimeIds = new Set([
   'advBtnPrevFrame', 'advBtnNextFrame', 'btnVideoCustomDims', 'advVideoCustomDimsGroup',
   'advVideoCustomWidth', 'advVideoCustomHeight', 'btnLockVideoRatio',
   'advVideoTimeline', 'advVideoTimeDisplay',
-  'advDocPageSize', 'advDocMargin', 'btnDocPortrait', 'btnDocLandscape'
+  'advDocPageSize', 'advDocMargin', 'btnDocPortrait', 'btnDocLandscape',
+  'aboutSection'
 ]);
 
 for (const refId of referencedIds) {
@@ -1388,6 +1389,9 @@ async function testBackendEngine() {
   assert(mainIndexCode.includes('setProgressBar'), 'src/main/index.js integrates mainWindow.setProgressBar');
   assert(mainIndexCode.includes('Notification'), 'src/main/index.js integrates Windows Native Notification');
   assert(mainIndexCode.includes('setupWindowsIntegration'), 'src/main/index.js defines setupWindowsIntegration');
+  assert(mainIndexCode.includes('autoHideMenuBar: true'), 'src/main/index.js sets autoHideMenuBar: true');
+  assert(mainIndexCode.includes('mainWindow.removeMenu()'), 'src/main/index.js calls mainWindow.removeMenu() to remove native menu');
+  assert(mainIndexCode.includes('mainWindow.setMenuBarVisibility(false)'), 'src/main/index.js hides menu bar visibility');
 
   // 10. فحص منظومة الترجمة الخارجية وتنسيق المظهر (Subtitles Suite & Styling)
   const mockCommandExternalBurn = {
@@ -1583,6 +1587,59 @@ async function testBackendEngine() {
   assert(uiController.currentAudioPath === sampleAudioTask.filePath, 'toggleAudioPreview sets currentAudioPath');
   uiController.stopAudioPreview();
   assert(uiController.currentAudioPath === null, 'stopAudioPreview resets currentAudioPath');
+
+  // 20. فحص تثبيت الهوية الرسمية OmniConvert وتوثيق حقوق المطور Sajed Tech وبيانات التواصل والترخيص
+  console.log('\n[Brand & Developer Audit] Verifying OmniConvert Identity & Sajed Tech Developer Rights...');
+
+  // فحص package.json
+  const pkgData = JSON.parse(fs.readFileSync(path.join(__dirname, 'package.json'), 'utf8'));
+  assert(pkgData.name === 'omniconvert', 'package.json name is omniconvert');
+  assert(pkgData.productName === 'OmniConvert', 'package.json productName is OmniConvert');
+  assert(pkgData.author === 'Sajed Tech <sajedsupport@gmail.com>', 'package.json author matches Sajed Tech info');
+  assert(pkgData.description && pkgData.description.includes('Sajed Tech'), 'package.json description includes Sajed Tech');
+  assert(pkgData.repository && pkgData.repository.url === 'https://github.com/SajedPro1/OmniConvert.git', 'package.json repository matches OmniConvert repo');
+
+  // فحص electron-builder.yml
+  const builderYaml = fs.readFileSync(path.join(__dirname, 'electron-builder.yml'), 'utf8');
+  assert(builderYaml.includes('appId: com.sajedpro.omniconvert'), 'electron-builder.yml appId is com.sajedpro.omniconvert');
+  assert(builderYaml.includes('productName: OmniConvert'), 'electron-builder.yml productName is OmniConvert');
+  assert(builderYaml.includes('copyright: Copyright © 2026 Sajed Tech. All rights reserved.'), 'electron-builder.yml copyright matches Sajed Tech 2026');
+  assert(builderYaml.includes('companyName: "Sajed Tech"'), 'electron-builder.yml win companyName is Sajed Tech');
+  assert(builderYaml.includes('fileDescription: "OmniConvert — High Performance Offline Media & Document Converter by Sajed Tech"'), 'electron-builder.yml win fileDescription matches Sajed Tech');
+
+  // فحص قسم معلومات المطور في الواجهة (#aboutSection)
+  assert(htmlContent.includes('id="aboutSection"'), 'index.html contains #aboutSection');
+  assert(htmlContent.includes('OmniConvert v1.0.0'), 'index.html contains OmniConvert title and version');
+  assert(htmlContent.includes('by Sajed Tech'), 'index.html contains by Sajed Tech badge');
+  assert(htmlContent.includes('المطور:') && htmlContent.includes('Sajed Tech'), 'index.html contains developer Sajed Tech');
+  assert(!htmlContent.includes('الترخيص (License)'), 'index.html does not contain merged (License) label');
+  assert(htmlContent.includes('MIT License — Copyright (c) 2026 Sajed Tech'), 'index.html contains standard MIT license: MIT License — Copyright (c) 2026 Sajed Tech');
+  assert(htmlContent.includes('data-url="https://github.com/SajedPro1/OmniConvert"'), 'index.html contains GitHub repo link');
+  assert(htmlContent.includes('https://mail.google.com/mail/?view=cm') && htmlContent.includes('to=sajedsupport@gmail.com'), 'index.html contains Gmail direct support link');
+  assert(htmlContent.includes('data-url="https://www.youtube.com/@SajedProyt"'), 'index.html contains YouTube channel link for SajedProyt');
+
+  // فحص ربط قنوات فتح الروابط الخارجية بأمان (Preload, IPC Handlers, IPC Client)
+  const ipcHandlersSrc = fs.readFileSync(path.join(__dirname, 'src/main/ipc-handlers.js'), 'utf8');
+  assert(ipcHandlersSrc.includes("'system:open-external'"), 'ipc-handlers.js defines system:open-external channel');
+  assert(ipcHandlersSrc.includes('/^(https?|mailto):/i'), 'system:open-external safely restricts protocols to https? and mailto');
+
+  const preloadSrc = fs.readFileSync(path.join(__dirname, 'src/preload/index.js'), 'utf8');
+  assert(preloadSrc.includes('openExternal:'), 'preload/index.js exposes openExternal');
+  assert(preloadSrc.includes("'system:open-external'"), 'preload/index.js invokes system:open-external');
+
+  const ipcClientSrc = fs.readFileSync(path.join(__dirname, 'src/renderer/scripts/ipc-client.js'), 'utf8');
+  assert(ipcClientSrc.includes('openExternal(url)'), 'ipc-client.js implements openExternal method');
+
+  // فحص تصيير شاشة الإعدادات برمجياً عبر uiController
+  const mockSettingsView = new MockElement('settingsView', 'section');
+  uiController.elements.settingsView = mockSettingsView;
+  uiController.renderSettings(appState);
+  assert(mockSettingsView.innerHTML.includes('id="aboutSection"'), 'renderSettings dynamically renders #aboutSection');
+  assert(mockSettingsView.innerHTML.includes('by Sajed Tech'), 'renderSettings renders by Sajed Tech badge');
+  assert(mockSettingsView.innerHTML.includes('https://github.com/SajedPro1/OmniConvert'), 'renderSettings renders GitHub repo link');
+  assert(mockSettingsView.innerHTML.includes('https://mail.google.com/mail/?view=cm') && mockSettingsView.innerHTML.includes('to=sajedsupport@gmail.com'), 'renderSettings renders Gmail direct support link');
+  assert(mockSettingsView.innerHTML.includes('https://www.youtube.com/@SajedProyt'), 'renderSettings renders YouTube channel link');
+  assert(mockSettingsView.innerHTML.includes('MIT License — Copyright (c) 2026 Sajed Tech'), 'renderSettings renders standard MIT license: MIT License — Copyright (c) 2026 Sajed Tech');
 }
 
 testBackendEngine().then(() => {

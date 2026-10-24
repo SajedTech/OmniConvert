@@ -1,9 +1,14 @@
 {
-  "name": "open-uniconverter",
+  "name": "omniconvert",
+  "productName": "OmniConvert",
   "version": "1.0.0",
-  "description": "تطبيق مكتبي مفتوح المصدر لتحويل الوسائط المتعددة والمستندات دون إنترنت",
+  "description": "تطبيق مكتبي متكامل لتحويل الوسائط والمستندات دون إنترنت — بواسطة Sajed Tech",
   "main": "src/main/index.js",
-  "author": "",
+  "author": "Sajed Tech <sajedsupport@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SajedPro1/OmniConvert.git"
+  },
   "license": "MIT",
   "scripts": {
     "start": "electron .",

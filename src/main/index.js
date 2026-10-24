@@ -62,7 +62,8 @@ function createWindow() {
     minWidth: 960,
     minHeight: 640,
     backgroundColor: '#121316',
-    title: 'Open-UniConverter',
+    title: 'OmniConvert',
+    autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: false,   // حظر Node.js في الواجهة (PRD القسم 07)
       contextIsolation: true,   // فصل نطاق الواجهة عن preload
@@ -70,6 +71,10 @@ function createWindow() {
       preload: path.join(__dirname, '../preload/index.js')
     }
   });
+
+  // إخفاء وحذف شريط القوائم الافتراضي للنافذة
+  mainWindow.removeMenu();
+  mainWindow.setMenuBarVisibility(false);
 
   // تسجيل قنوات IPC
   registerIpcHandlers(mainWindow);

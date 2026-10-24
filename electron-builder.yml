@@ -1,6 +1,6 @@
-appId: com.open-uniconverter.app
-productName: Open-UniConverter
-copyright: Copyright © 2026
+appId: com.sajedpro.omniconvert
+productName: OmniConvert
+copyright: Copyright © 2026 Sajed Tech. All rights reserved.
 
 # الملف الرئيسي للواجهة
 files:
@@ -25,6 +25,8 @@ directories:
   buildResources: build
 
 win:
+  companyName: "Sajed Tech"
+  fileDescription: "OmniConvert — High Performance Offline Media & Document Converter by Sajed Tech"
   target:
     - target: nsis
       arch:

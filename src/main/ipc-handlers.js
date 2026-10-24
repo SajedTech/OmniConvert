@@ -393,6 +393,21 @@ function registerIpcHandlers(mainWindow) {
     }
   });
 
+  // 7.1 system:open-external — فتح الروابط الخارجية بأمان عبر المتصفح الافتراضي
+  ipcMain.handle('system:open-external', async (event, { url } = {}) => {
+    if (!url || typeof url !== 'string') return { success: false, error: 'الرابط غير صالح' };
+    const trimmed = url.trim();
+    if (/^(https?|mailto):/i.test(trimmed)) {
+      try {
+        await shell.openExternal(trimmed);
+        return { success: true };
+      } catch (err) {
+        return { success: false, error: err.message };
+      }
+    }
+    return { success: false, error: 'بروتوكول غير مسموح' };
+  });
+
   // 8. history:get — جلب السجل مع التقسيم الصفحي
   ipcMain.handle('history:get', async (event, { limit = 50, offset = 0, status = null, format = null } = {}) => {
     try {

@@ -61,6 +61,17 @@ const ipcClient = {
     return await window.electronAPI.openPath(targetPath, isFolder);
   },
 
+  async openExternal(url) {
+    if (!this.isAvailable) return { success: false };
+    if (window.electronAPI.system && typeof window.electronAPI.system.openExternal === 'function') {
+      return await window.electronAPI.system.openExternal(url);
+    }
+    if (typeof window.electronAPI.openExternal === 'function') {
+      return await window.electronAPI.openExternal(url);
+    }
+    return { success: false };
+  },
+
   async getGpuStatus() {
     if (!this.isAvailable) return { hasGpu: false, h264_nvenc: false, hevc_nvenc: false };
     return await window.electronAPI.getGpuStatus();

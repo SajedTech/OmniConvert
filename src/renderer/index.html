@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Content-Security-Policy"
         content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self' media-stream: blob: data:;" />
-  <title>Open-UniConverter</title>
+  <title>OmniConvert</title>
   <link rel="stylesheet" href="styles/main.css" />
   <link rel="stylesheet" href="styles/sidebar.css" />
   <link rel="stylesheet" href="styles/queue.css" />
@@ -23,7 +23,7 @@
               <line x1="12" y1="2" x2="12" y2="15"></line>
             </svg>
           </div>
-          <div class="brand-title">Open-UniConverter</div>
+          <div class="brand-title">OmniConvert</div>
         </div>
         <div class="gpu-badge" id="gpuStatus">
           <span class="gpu-dot"></span>
@@ -239,7 +239,41 @@
         <section id="historyView" class="history-view" style="display: none;"></section>
 
         <!-- شاشة الإعدادات (مخفية افتراضياً) -->
-        <section id="settingsView" class="settings-view" style="display: none;"></section>
+        <section id="settingsView" class="settings-view" style="display: none;">
+          <div class="settings-card about-card" id="aboutSection">
+            <div class="about-header">
+              <div class="about-brand-row">
+                <h3 class="about-title">OmniConvert v1.0.0</h3>
+                <span class="dev-badge">by Sajed Tech</span>
+              </div>
+              <p class="settings-desc about-desc">برمجية مجانية متكاملة لتحويل الوسائط والمستندات محلياً بأعلى كفاءة وخصوصية 100% دون إنترنت مع تسريع العتاد GPU.</p>
+            </div>
+            <div class="developer-license-box">
+              <div class="dev-info-row">
+                <span class="dev-label">👤 المطور:</span>
+                <span class="dev-val">Sajed Tech</span>
+              </div>
+              <div class="dev-info-row">
+                <span class="dev-label">📜 الترخيص:</span>
+                <span class="dev-val" dir="ltr">MIT License — Copyright (c) 2026 Sajed Tech</span>
+              </div>
+            </div>
+            <div class="about-links-group">
+              <button type="button" class="btn-about-link" data-url="https://github.com/SajedPro1/OmniConvert">
+                <span class="link-icon">🐙</span>
+                <span>مستودع المشروع (GitHub)</span>
+              </button>
+              <button type="button" class="btn-about-link" data-url="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=sajedsupport@gmail.com&amp;su=OmniConvert%20Support%20Request">
+                <span class="link-icon">✉️</span>
+                <span>الدعم الفني (Support)</span>
+              </button>
+              <button type="button" class="btn-about-link" data-url="https://www.youtube.com/@SajedProyt">
+                <span class="link-icon">📺</span>
+                <span>قناة المطور (YouTube)</span>
+              </button>
+            </div>
+          </div>
+        </section>
       </div>
 
       <!-- تراكب السحب والإفلات الشامل عند التحليق فوق النافذة -->

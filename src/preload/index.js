@@ -59,6 +59,16 @@ contextBridge.exposeInMainWorld('electronAPI', {
     return ipcRenderer.invoke('system:open-path', { targetPath, isFolder });
   },
 
+  openExternal: (url) => {
+    return ipcRenderer.invoke('system:open-external', { url });
+  },
+
+  system: {
+    openExternal: (url) => ipcRenderer.invoke('system:open-external', { url }),
+    openPath: (targetPath, isFolder = false) => ipcRenderer.invoke('system:open-path', { targetPath, isFolder }),
+    getGpuStatus: () => ipcRenderer.invoke('system:gpu-status')
+  },
+
   getGpuStatus: () => {
     return ipcRenderer.invoke('system:gpu-status');
   },

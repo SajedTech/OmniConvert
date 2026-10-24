@@ -2110,10 +2110,40 @@ const uiController = {
         </div>
       </div>
 
-      <div class="settings-card">
-        <h3>حول التطبيق</h3>
-        <p><strong>Open-UniConverter</strong> — الإصدار v1.0.0</p>
-        <p class="settings-desc">برمجية مفتوحة المصدر لتحويل الوسائط والمستندات بأعلى كفاءة وأمان، وتعمل بدون إنترنت 100%.</p>
+      <div class="settings-card about-card" id="aboutSection">
+        <div class="about-header">
+          <div class="about-brand-row">
+            <h3 class="about-title">OmniConvert v1.0.0</h3>
+            <span class="dev-badge">by Sajed Tech</span>
+          </div>
+          <p class="settings-desc about-desc">برمجية مجانية متكاملة لتحويل الوسائط والمستندات محلياً بأعلى كفاءة وخصوصية 100% دون إنترنت مع تسريع العتاد GPU.</p>
+        </div>
+
+        <div class="developer-license-box">
+          <div class="dev-info-row">
+            <span class="dev-label">👤 المطور:</span>
+            <span class="dev-val">Sajed Tech</span>
+          </div>
+          <div class="dev-info-row">
+            <span class="dev-label">📜 الترخيص:</span>
+            <span class="dev-val" dir="ltr">MIT License — Copyright (c) 2026 Sajed Tech</span>
+          </div>
+        </div>
+
+        <div class="about-links-group">
+          <button type="button" class="btn-about-link" data-url="https://github.com/SajedPro1/OmniConvert">
+            <span class="link-icon">🐙</span>
+            <span>مستودع المشروع (GitHub)</span>
+          </button>
+          <button type="button" class="btn-about-link" data-url="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=sajedsupport@gmail.com&amp;su=OmniConvert%20Support%20Request">
+            <span class="link-icon">✉️</span>
+            <span>الدعم الفني (Support)</span>
+          </button>
+          <button type="button" class="btn-about-link" data-url="https://www.youtube.com/@SajedProyt">
+            <span class="link-icon">📺</span>
+            <span>قناة المطور (YouTube)</span>
+          </button>
+        </div>
       </div>
     `;
 
@@ -2127,6 +2157,22 @@ const uiController = {
         this.renderSettings(state);
         this.showToast('تم تحديث مسار الحفظ الافتراضي', 'success');
       }
+    });
+
+    settingsView.querySelectorAll('.btn-about-link').forEach((btn) => {
+      btn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const url = btn.getAttribute('data-url');
+        if (url) {
+          if (window.ipcClient && typeof window.ipcClient.openExternal === 'function') {
+            await window.ipcClient.openExternal(url);
+          } else if (window.electronAPI?.system?.openExternal) {
+            await window.electronAPI.system.openExternal(url);
+          } else if (window.electronAPI?.openExternal) {
+            await window.electronAPI.openExternal(url);
+          }
+        }
+      });
     });
   },
 
