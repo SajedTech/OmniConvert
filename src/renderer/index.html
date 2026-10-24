@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self' media-stream: blob: data:;" />
+  <title>Open-UniConverter</title>
+  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="stylesheet" href="styles/sidebar.css" />
+  <link rel="stylesheet" href="styles/queue.css" />
+</head>
+<body>
+  <div class="app-container">
+    <!-- الشريط الجانبي الثابت 240px (PRD القسم 01) -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="brand-row">
+          <div class="brand-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+              <polyline points="16 6 12 2 8 6"></polyline>
+              <line x1="12" y1="2" x2="12" y2="15"></line>
+            </svg>
+          </div>
+          <div class="brand-title">Open-UniConverter</div>
+        </div>
+        <div class="gpu-badge" id="gpuStatus">
+          <span class="gpu-dot"></span>
+          <span>تسريع العتاد GPU</span>
+        </div>
+      </div>
+
+      <!-- قائمة التنقل: التبويب الأول هو المحول الذكي الشامل -->
+      <nav class="sidebar-nav">
+        <div class="nav-item active" data-section="universal" id="navUniversal">
+          <div class="nav-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+          </div>
+          <span>المحول الذكي الشامل</span>
+        </div>
+
+        <div class="nav-item" data-section="video" id="navVideo">
+          <div class="nav-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
+              <line x1="7" y1="2" x2="7" y2="22"></line>
+              <line x1="17" y1="2" x2="17" y2="22"></line>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+            </svg>
+          </div>
+          <span>محول الفيديو</span>
+        </div>
+
+        <div class="nav-item" data-section="audio" id="navAudio">
+          <div class="nav-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 18V5l12-2v13"></path>
+              <circle cx="6" cy="18" r="3"></circle>
+              <circle cx="18" cy="16" r="3"></circle>
+            </svg>
+          </div>
+          <span>محول الصوت</span>
+        </div>
+
+        <div class="nav-item" data-section="image" id="navImage">
+          <div class="nav-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <circle cx="8.5" cy="8.5" r="1.5"></circle>
+              <polyline points="21 15 16 10 5 21"></polyline>
+            </svg>
+          </div>
+          <span>معالج الصور</span>
+        </div>
+
+        <div class="nav-item" data-section="document" id="navDocument">
+          <div class="nav-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+            </svg>
+          </div>
+          <span>محول المستندات</span>
+        </div>
+
+        <div class="nav-item" data-section="compressor" id="navCompressor">
+          <div class="nav-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="4 14 10 14 10 20"></polyline>
+              <polyline points="20 10 14 10 14 4"></polyline>
+              <line x1="14" y1="10" x2="21" y2="3"></line>
+              <line x1="3" y1="21" x2="10" y2="14"></line>
+            </svg>
+          </div>
+          <span>ضاغط الوسائط 🗜️</span>
+        </div>
+
+        <div class="nav-item" data-section="history">
+          <div class="nav-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+          </div>
+          <span>سجل العمليات</span>
+        </div>
+
+        <div class="nav-item" data-section="settings">
+          <div class="nav-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+          </div>
+          <span>إعدادات النظام</span>
+        </div>
+      </nav>
+
+      <!-- لوحة مسار الإخراج السفلية -->
+      <div class="sidebar-footer">
+        <div class="output-folder-card">
+          <div class="output-folder-header">
+            <span class="output-folder-label">مجلد الحفظ:</span>
+            <button id="btnChangeOutputFolder" class="btn-folder-change">تغيير</button>
+          </div>
+          <div class="output-folder-path" id="outputFolderText" title="مجلد الملف المصدر تلقائياً">مجلد الملف الأصلي</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- مساحة العمل الرئيسية -->
+    <main class="main-content">
+      <!-- شريط الرأس العلوي -->
+      <header class="top-header queue-header">
+        <h2 class="section-title" id="sectionTitle">المحول الذكي الشامل (Auto-Detect Hub)</h2>
+
+        <!-- شريط التحكم الجماعي الاحترافي بتسلسل هرمي بصري منظم -->
+        <div class="batch-toolbar" id="batchToolbar">
+          <!-- شريط الأدوات الثانوية الموحد -->
+          <div class="secondary-tools-group">
+            <button id="btnAddMoreFiles" class="btn-secondary btn-secondary-tool" title="إضافة المزيد من الملفات للرتل">+ إضافة ملفات</button>
+
+            <!-- منتقي وتطبيق الصيغة الجماعية -->
+            <div class="batch-format-group">
+              <span class="batch-label">الصيغة:</span>
+              <select id="globalFormatSelect" class="input-select select-secondary-tool" title="اختر صيغة للتطبيق الجماعي"></select>
+              <button id="btnApplyToAllType" class="btn-secondary btn-secondary-tool" title="تطبيق الصيغة المختارة على جميع ملفات نفس النوع في الرتل">تطبيق على الكل</button>
+            </div>
+
+            <!-- أدوات الأبعاد المجمعة للصور -->
+            <div class="batch-center" id="batchImageResizeContainer" style="display: none;">
+              <div class="dropdown-wrapper" id="batchResizeDropdownWrapper" style="position: relative;">
+                <button type="button" id="btnBatchImageResize" class="btn-secondary btn-secondary-tool" title="توحيد مقاسات وأبعاد كافة الصور في الرتل">
+                  📐 توحيد الأبعاد ▾
+                </button>
+                <div class="dropdown-menu-panel batch-resize-panel" id="batchResizePanel" style="display: none;">
+                  <div class="panel-section-title">مقاسات الطباعة المعيارية:</div>
+                  <button type="button" class="dropdown-item-btn" data-preset="a4-print-300">📄 A4 طباعة فائقة (2480×3508 px)</button>
+                  <button type="button" class="dropdown-item-btn" data-preset="a5-print-300">📄 A5 طباعة قياسية (1748×2480 px)</button>
+                  <div class="panel-section-title">منصات التواصل والشاشات:</div>
+                  <button type="button" class="dropdown-item-btn" data-preset="insta-square">⏹️ مربع انستغرام (1080×1080 px)</button>
+                  <button type="button" class="dropdown-item-btn" data-preset="story-shorts">📱 ستوري / شورتس (1080×1920 px)</button>
+                  <button type="button" class="dropdown-item-btn" data-preset="fhd-1080p">🎬 Full HD شاشة (1920×1080 px)</button>
+                  <div class="panel-section-title">أبعاد مخصصة صريحة للكل:</div>
+                  <div class="custom-batch-resize-inputs">
+                    <input type="number" id="batchCustomW" class="input-text-sm" placeholder="العرض px" min="16" />
+                    <span>×</span>
+                    <input type="number" id="batchCustomH" class="input-text-sm" placeholder="الارتفاع px" min="16" />
+                    <button type="button" id="btnApplyBatchCustomDims" class="btn-primary btn-sm">تطبيق</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- أدوات الأبعاد المجمعة للفيديو -->
+            <div class="batch-center" id="batchVideoResizeContainer" style="display: none;">
+              <div class="dropdown-wrapper" id="batchVideoResizeDropdownWrapper" style="position: relative;">
+                <button type="button" id="btnBatchVideoResize" class="btn-secondary btn-secondary-tool" title="توحيد أبعاد ودقة كافة مقاطع الفيديو في الرتل">
+                  🎬 توحيد أبعاد الفيديو ▾
+                </button>
+                <div class="dropdown-menu-panel batch-resize-panel" id="batchVideoResizePanel" style="display: none;">
+                  <div class="panel-section-title">منصات الفيديو ونسب الأبعاد:</div>
+                  <button type="button" class="dropdown-item-btn" data-aspect="9:16" data-res="1080p" data-w="1080" data-h="1920" data-label="9:16 تيك توك و Shorts (1080×1920)">📱 9:16 تيك توك و Shorts (1080×1920)</button>
+                  <button type="button" class="dropdown-item-btn" data-aspect="16:9" data-res="1080p" data-w="1920" data-h="1080" data-label="16:9 يوتيوب Full HD (1920×1080)">🎬 16:9 يوتيوب Full HD (1920×1080)</button>
+                  <button type="button" class="dropdown-item-btn" data-aspect="1:1" data-res="1080p" data-w="1080" data-h="1080" data-label="1:1 مربع انستغرام (1080×1080)">⏹️ 1:1 مربع انستغرام (1080×1080)</button>
+                  <button type="button" class="dropdown-item-btn" data-aspect="16:9" data-res="720p" data-w="1280" data-h="720" data-label="720p HD كلاسيكي (1280×720)">📺 720p HD كلاسيكي (1280×720)</button>
+                  <button type="button" class="dropdown-item-btn" data-aspect="16:9" data-res="4k" data-w="3840" data-h="2160" data-label="4K Ultra HD (3840×2160)">🖥️ 4K Ultra HD (3840×2160)</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- زر تبديل نمط العرض -->
+            <button id="toggleViewBtn" class="btn-secondary btn-secondary-tool" title="التبديل بين العرض البسيط والعرض المفصل">📑 نمط العرض (بسيط)</button>
+
+            <!-- زر إفراغ الرتل الهادئ -->
+            <button id="btnClearAll" class="btn-secondary btn-secondary-tool btn-clear-quiet" title="إفراغ كافة المهام من الرتل">🗑️ إفراغ الرتل</button>
+          </div>
+
+          <!-- الزر الرئيسي البارز (Hero CTA) -->
+          <div class="hero-cta-wrapper">
+            <button id="btnStartAll" class="btn-primary btn-hero-cta" title="بدء معالجة وتحويل كافة الملفات الجاهزة في الرتل">بدء التحويل (0)</button>
+          </div>
+        </div>
+      </header>
+
+      <!-- الحاوية القابلة للتمرير للمحتوى -->
+      <div class="content-viewport">
+        <!-- شاشة المحول (منطقة الإفلات أو رتل المهام) -->
+        <section id="converterView">
+          <!-- منطقة السحب والإفلات المركزية -->
+          <div class="drop-zone" id="dropZone">
+            <div class="drop-icon-wrapper">
+              <svg viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="2" x2="12" y2="15"></line>
+              </svg>
+            </div>
+            <h3 class="drop-title" id="dropZoneTitle">اسحب وأفلت الملفات هنا لبدء التحويل</h3>
+            <p class="drop-subtitle" id="dropZoneSubtitle">يدعم تحويل جميع صيغ الفيديو، الصوت، الصور، والمستندات دون إنترنت وبأمان تام.</p>
+            <div class="drop-actions">
+              <button id="btnSelectFiles" class="btn-primary">اختيار ملفات متعددة</button>
+              <button id="btnSelectFolder" class="btn-secondary">اختيار مجلد كامل</button>
+            </div>
+          </div>
+
+          <!-- حاوية قائمة الانتظار والمهام -->
+          <div class="queue-container" id="queueContainer">
+            <div class="tasks-list compact-view" id="tasksList"></div>
+          </div>
+        </section>
+
+        <!-- شاشة سجل العمليات (مخفية افتراضياً) -->
+        <section id="historyView" class="history-view" style="display: none;"></section>
+
+        <!-- شاشة الإعدادات (مخفية افتراضياً) -->
+        <section id="settingsView" class="settings-view" style="display: none;"></section>
+      </div>
+
+      <!-- تراكب السحب والإفلات الشامل عند التحليق فوق النافذة -->
+      <div class="drag-overlay" id="dragOverlay">
+        <div class="drag-overlay-content">
+          <svg class="drag-overlay-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+          <div class="drag-overlay-text">أفلت الملفات الآن — سيتم التعرف عليها آلياً</div>
+          <div class="drag-overlay-subtext">يدعم الفيديو، الصوتيات، الصور، والمستندات بجميع الصيغ</div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- نافذة الخيارات المتقدمة (Modal) -->
+  <div class="modal-backdrop" id="advancedModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h4>خيارات التحويل المتقدمة</h4>
+        <button class="modal-close" id="modalCloseBtn">✕</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancelBtn">إلغاء</button>
+        <button class="btn-primary" id="modalSaveBtn">حفظ الخيارات</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- نافذة اختيار الصيغ الاحترافية الشاملة مع البحث والتصنيفات (Format Picker Modal) -->
+  <div class="format-picker-backdrop" id="formatPickerModal">
+    <div class="format-picker-dialog">
+      <!-- شريط الرأس والبحث العلوي -->
+      <div class="picker-header">
+        <div class="picker-title-row">
+          <div class="picker-title-wrap">
+            <span class="picker-title-icon">🎯</span>
+            <h4>اختيار صيغة التحويل المستهدفة</h4>
+          </div>
+          <span class="picker-file-badge" id="pickerFileName">file.mp4</span>
+          <button class="picker-close-btn" id="formatPickerCloseBtn" title="إغلاق">✕</button>
+        </div>
+
+        <div class="picker-search-bar">
+          <svg class="picker-search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="formatPickerSearchInput" class="picker-search-input" placeholder="ابحث عن صيغة أو امتداد (مثال: MP4, MP3, WebP, AVIF, PDF...)" autocomplete="off" />
+          <button class="picker-search-clear" id="pickerSearchClearBtn" style="display: none;">✕</button>
+        </div>
+      </div>
+
+      <!-- الجسم المنقسم: التبويبات الجانبية على اليمين وشبكة الصيغ في المنتصف -->
+      <div class="picker-body">
+        <aside class="picker-sidebar">
+          <button class="picker-nav-btn active" data-category="video">
+            <span class="nav-btn-icon">🎬</span>
+            <span class="nav-btn-text">مقطع فيديو</span>
+            <span class="nav-btn-count" id="countVideoFormats">10</span>
+          </button>
+          <button class="picker-nav-btn" data-category="audio">
+            <span class="nav-btn-icon">🎵</span>
+            <span class="nav-btn-text">ملف صوتي</span>
+            <span class="nav-btn-count" id="countAudioFormats">9</span>
+          </button>
+          <button class="picker-nav-btn" data-category="image">
+            <span class="nav-btn-icon">🖼️</span>
+            <span class="nav-btn-text">الصورة</span>
+            <span class="nav-btn-count" id="countImageFormats">12</span>
+          </button>
+          <button class="picker-nav-btn" data-category="document">
+            <span class="nav-btn-icon">📄</span>
+            <span class="nav-btn-text">المستند</span>
+            <span class="nav-btn-count" id="countDocFormats">1</span>
+          </button>
+        </aside>
+
+        <main class="picker-grid-viewport">
+          <div class="picker-grid-header">
+            <span class="grid-section-title" id="pickerSectionTitle">صيغ الفيديو المدعومة</span>
+            <span class="grid-section-hint">انقر على أي صيغة لتعيينها وتحديث الناتج المتوقع فوراً</span>
+          </div>
+          <div class="format-grid" id="formatGridContainer"></div>
+          <div class="picker-empty-state" id="pickerEmptyState" style="display: none;">
+            <span>لا توجد صيغ مطابقة لكلمة البحث</span>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <!-- حاوية إشعارات الـ Toast -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- سكريبتات الواجهة بالتسلسل المنطقي -->
+  <script src="scripts/ipc-client.js"></script>
+  <script src="scripts/state.js"></script>
+  <script src="scripts/ui-controller.js"></script>
+  <script src="scripts/app.js"></script>
+</body>
+</html>

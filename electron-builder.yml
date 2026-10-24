@@ -1,0 +1,62 @@
+appId: com.open-uniconverter.app
+productName: Open-UniConverter
+copyright: Copyright © 2026
+
+# الملف الرئيسي للواجهة
+files:
+  - src/**/*
+  - package.json
+
+# تفكيك الثنائيات خارج ASAR لمنع تعطلها عند spawn
+asar: true
+asarUnpack:
+  # ثنائيات FFmpeg وFFprobe
+  - node_modules/ffmpeg-static/**/*
+  - node_modules/ffprobe-static/**/*
+  # ملفات Node الأصلية لـ Sharp (libvips)
+  - node_modules/sharp/**/*.node
+  - node_modules/sharp/build/Release/**/*
+  # ملفات Node الأصلية لـ better-sqlite3
+  - node_modules/better-sqlite3/**/*.node
+  - node_modules/better-sqlite3/build/Release/**/*
+
+directories:
+  output: dist
+  buildResources: build
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+    - target: portable
+      arch:
+        - x64
+  icon: build/icon.ico
+
+mac:
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+  icon: build/icon.icns
+  category: public.app-category.video
+
+linux:
+  target:
+    - target: AppImage
+      arch:
+        - x64
+  icon: build/icon.png
+  category: Video
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  deleteAppDataOnUninstall: false
+
+# ضبط إعادة بناء الوحدات الأصلية لمنصة الهدف
+npmRebuild: true
