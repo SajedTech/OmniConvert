@@ -2,7 +2,7 @@
   "name": "omniconvert",
   "productName": "OmniConvert",
   "version": "1.0.0",
-  "description": "تطبيق مكتبي متكامل لتحويل الوسائط والمستندات دون إنترنت — بواسطة Sajed Tech",
+  "description": "OmniConvert — High Performance Offline Media & Document Converter by Sajed Tech",
   "main": "src/main/index.js",
   "author": "Sajed Tech <sajedsupport@gmail.com>",
   "repository": {

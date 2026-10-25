@@ -69,6 +69,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getGpuStatus: () => ipcRenderer.invoke('system:gpu-status')
   },
 
+  // 5.1 قنوات الحافظة ولصق الصور (Clipboard Paste Suite)
+  clipboard: {
+    readImage: () => ipcRenderer.invoke('clipboard:read-image'),
+    saveTempImage: (dataUrl) => ipcRenderer.invoke('clipboard:save-temp-image', typeof dataUrl === 'object' ? dataUrl : { dataUrl })
+  },
+
   getGpuStatus: () => {
     return ipcRenderer.invoke('system:gpu-status');
   },

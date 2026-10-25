@@ -1604,8 +1604,10 @@ async function testBackendEngine() {
   assert(builderYaml.includes('appId: com.sajedpro.omniconvert'), 'electron-builder.yml appId is com.sajedpro.omniconvert');
   assert(builderYaml.includes('productName: OmniConvert'), 'electron-builder.yml productName is OmniConvert');
   assert(builderYaml.includes('copyright: Copyright © 2026 Sajed Tech. All rights reserved.'), 'electron-builder.yml copyright matches Sajed Tech 2026');
-  assert(builderYaml.includes('companyName: "Sajed Tech"'), 'electron-builder.yml win companyName is Sajed Tech');
-  assert(builderYaml.includes('fileDescription: "OmniConvert — High Performance Offline Media & Document Converter by Sajed Tech"'), 'electron-builder.yml win fileDescription matches Sajed Tech');
+  assert(builderYaml.includes('publisherName: "Sajed Tech"'), 'electron-builder.yml win publisherName is Sajed Tech');
+  assert(!builderYaml.includes('companyName:'), 'electron-builder.yml does not contain invalid win companyName property');
+  assert(!builderYaml.includes('fileDescription:'), 'electron-builder.yml does not contain invalid win fileDescription property');
+  assert(pkgData.description === 'OmniConvert — High Performance Offline Media & Document Converter by Sajed Tech', 'package.json description matches OmniConvert fileDescription');
 
   // فحص قسم معلومات المطور في الواجهة (#aboutSection)
   assert(htmlContent.includes('id="aboutSection"'), 'index.html contains #aboutSection');
@@ -1615,7 +1617,7 @@ async function testBackendEngine() {
   assert(!htmlContent.includes('الترخيص (License)'), 'index.html does not contain merged (License) label');
   assert(htmlContent.includes('MIT License — Copyright (c) 2026 Sajed Tech'), 'index.html contains standard MIT license: MIT License — Copyright (c) 2026 Sajed Tech');
   assert(htmlContent.includes('data-url="https://github.com/SajedPro1/OmniConvert"'), 'index.html contains GitHub repo link');
-  assert(htmlContent.includes('https://mail.google.com/mail/?view=cm') && htmlContent.includes('to=sajedsupport@gmail.com'), 'index.html contains Gmail direct support link');
+  assert(htmlContent.includes('https://mail.google.com/mail/?view=cm') && htmlContent.includes('to=sajedsupport@gmail.com') && htmlContent.includes('body=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85'), 'index.html contains Gmail direct support link with pre-filled body');
   assert(htmlContent.includes('data-url="https://www.youtube.com/@SajedProyt"'), 'index.html contains YouTube channel link for SajedProyt');
 
   // فحص ربط قنوات فتح الروابط الخارجية بأمان (Preload, IPC Handlers, IPC Client)
@@ -1637,9 +1639,34 @@ async function testBackendEngine() {
   assert(mockSettingsView.innerHTML.includes('id="aboutSection"'), 'renderSettings dynamically renders #aboutSection');
   assert(mockSettingsView.innerHTML.includes('by Sajed Tech'), 'renderSettings renders by Sajed Tech badge');
   assert(mockSettingsView.innerHTML.includes('https://github.com/SajedPro1/OmniConvert'), 'renderSettings renders GitHub repo link');
-  assert(mockSettingsView.innerHTML.includes('https://mail.google.com/mail/?view=cm') && mockSettingsView.innerHTML.includes('to=sajedsupport@gmail.com'), 'renderSettings renders Gmail direct support link');
+  assert(mockSettingsView.innerHTML.includes('https://mail.google.com/mail/?view=cm') && mockSettingsView.innerHTML.includes('to=sajedsupport@gmail.com') && mockSettingsView.innerHTML.includes('body=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85'), 'renderSettings renders Gmail direct support link with pre-filled body');
   assert(mockSettingsView.innerHTML.includes('https://www.youtube.com/@SajedProyt'), 'renderSettings renders YouTube channel link');
   assert(mockSettingsView.innerHTML.includes('MIT License — Copyright (c) 2026 Sajed Tech'), 'renderSettings renders standard MIT license: MIT License — Copyright (c) 2026 Sajed Tech');
+
+  // 21. فحص دعم اللصق السريع من الحافظة (Clipboard Paste Support via Ctrl+V)
+  console.log('\n[Clipboard & Paste Audit] Verifying Clipboard Paste Support (Ctrl+V)...');
+
+  // فحص النص التوضيحي في index.html
+  assert(htmlContent.includes('أو اضغط Ctrl+V للصق الملفات ولقطات الشاشة مباشرة'), 'index.html contains Ctrl+V paste hint');
+
+  // فحص قنوات الحافظة في ipc-handlers.js
+  assert(ipcHandlersSrc.includes("'clipboard:read-image'"), 'ipc-handlers.js registers clipboard:read-image');
+  assert(ipcHandlersSrc.includes("'clipboard:save-temp-image'"), 'ipc-handlers.js registers clipboard:save-temp-image');
+
+  // فحص تزويد قنوات الحافظة في preload/index.js
+  assert(preloadSrc.includes('clipboard:'), 'preload/index.js exposes clipboard API');
+  assert(preloadSrc.includes("'clipboard:read-image'"), 'preload/index.js invokes clipboard:read-image');
+  assert(preloadSrc.includes("'clipboard:save-temp-image'"), 'preload/index.js invokes clipboard:save-temp-image');
+
+  // فحص دوال الحافظة في ipc-client.js
+  assert(ipcClientSrc.includes('clipboard:'), 'ipc-client.js provides clipboard helper');
+
+  // فحص استماع حدث paste في app.js
+  const appJsSrc = fs.readFileSync(path.join(__dirname, 'src/renderer/scripts/app.js'), 'utf8');
+  assert(appJsSrc.includes("addEventListener('paste'"), 'app.js attaches global paste event listener');
+  assert(appJsSrc.includes('clipboardData.files'), 'app.js handles clipboard files from Windows Explorer');
+  assert(appJsSrc.includes('clipboard.readImage'), 'app.js handles raw clipboard image/screenshot');
+  assert(appJsSrc.includes('clipboard.saveTempImage'), 'app.js calls clipboard.saveTempImage to persist temp image');
 }
 
 testBackendEngine().then(() => {

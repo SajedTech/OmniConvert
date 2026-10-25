@@ -72,6 +72,17 @@ const ipcClient = {
     return { success: false };
   },
 
+  clipboard: {
+    async readImage() {
+      if (!window.electronAPI?.clipboard?.readImage) return { isEmpty: true, dataUrl: null };
+      return await window.electronAPI.clipboard.readImage();
+    },
+    async saveTempImage(dataUrl) {
+      if (!window.electronAPI?.clipboard?.saveTempImage) return null;
+      return await window.electronAPI.clipboard.saveTempImage(dataUrl);
+    }
+  },
+
   async getGpuStatus() {
     if (!this.isAvailable) return { hasGpu: false, h264_nvenc: false, hevc_nvenc: false };
     return await window.electronAPI.getGpuStatus();

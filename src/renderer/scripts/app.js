@@ -71,6 +71,34 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, false);
 
+  const showToast = (msg, type = 'info') => {
+    if (window.uiController && typeof window.uiController.showToast === 'function') {
+      window.uiController.showToast(msg, type);
+    }
+  };
+
+  /**
+   * تسجيل وإدراج حزمة مسارات ملفات في رتل المهام والتحقق من صلاحيتها
+   */
+  const handleFileBatchAddition = async (filePaths = []) => {
+    if (!filePaths || filePaths.length === 0) return 0;
+    const res = await window.ipcClient.dropFiles(filePaths);
+    if (res && res.success && res.files && res.files.length > 0) {
+      let filesToAdd = res.files;
+      const pdfFiles = res.files.filter(f => (f.extension || '').toLowerCase().replace(/^\./, '') === 'pdf');
+      if (pdfFiles.length > 0) {
+        showToast('محول المستندات مخصص لتحويل ملفات Word (DOCX / DOC) إلى PDF فقط. ملفات PDF غير مدعومة كمدخلات.', 'error');
+        filesToAdd = res.files.filter(f => (f.extension || '').toLowerCase().replace(/^\./, '') !== 'pdf');
+      }
+      if (filesToAdd.length > 0) {
+        const added = window.appState.addFiles(filesToAdd);
+        return added;
+      }
+    }
+    return 0;
+  };
+  window.handleFileBatchAddition = handleFileBatchAddition;
+
   /**
    * استخراج المسارات الحقيقية للملفات المسقطة عبر webUtils.getPathForFile
    */
@@ -111,27 +139,60 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (filePaths.length === 0) return;
 
-    // فحص مواصفات الملفات المسقطة وإدراجها في الحالة
-    const res = await window.ipcClient.dropFiles(filePaths);
-    if (res.success && res.files && res.files.length > 0) {
-      let filesToAdd = res.files;
-      const pdfFiles = res.files.filter(f => (f.extension || '').toLowerCase().replace(/^\./, '') === 'pdf');
-      if (pdfFiles.length > 0) {
-        window.uiController.showToast('محول المستندات مخصص لتحويل ملفات Word (DOCX / DOC) إلى PDF فقط. ملفات PDF غير مدعومة كمدخلات.', 'error');
-        filesToAdd = res.files.filter(f => (f.extension || '').toLowerCase().replace(/^\./, '') !== 'pdf');
-      }
-      if (filesToAdd.length > 0) {
-        const added = window.appState.addFiles(filesToAdd);
-        if (added > 0) {
-          window.uiController.showToast(`تم التعرف على وإضافة ${added} ملف إلى رتل المعالجة`, 'info');
-        }
-      }
+    const added = await handleFileBatchAddition(filePaths);
+    if (added > 0) {
+      showToast(`تم التعرف على وإضافة ${added} ملف إلى رتل المعالجة`, 'info');
     }
   };
 
   window.addEventListener('drop', handleDrop, false);
   if (dragOverlay) dragOverlay.addEventListener('drop', handleDrop, false);
   if (dropZone) dropZone.addEventListener('drop', handleDrop, false);
+
+  // 2.1 دعم اللصق السريع من الحافظة (Clipboard Paste Support via Ctrl+V)
+  window.addEventListener('paste', async (e) => {
+    // عدم اعتراض اللصق العادي إذا كان التركيز في حقل إدخال نصي
+    const activeEl = document.activeElement;
+    const activeTag = activeEl ? activeEl.tagName.toLowerCase() : '';
+    if (activeTag === 'input' || activeTag === 'textarea' || activeEl?.isContentEditable) {
+      if (!e.clipboardData || !e.clipboardData.files || e.clipboardData.files.length === 0) {
+        return;
+      }
+    }
+
+    // الحالة 1: لصق ملفات تم نسخها من مستكشف ويندوز (Windows Explorer Files)
+    if (e.clipboardData && e.clipboardData.files && e.clipboardData.files.length > 0) {
+      e.preventDefault();
+      const paths = Array.from(e.clipboardData.files).map(f => {
+        let p = '';
+        if (window.electronAPI && typeof window.electronAPI.getPathForFile === 'function') {
+          try { p = window.electronAPI.getPathForFile(f); } catch (err) {}
+        }
+        return p || f.path || '';
+      }).filter(Boolean);
+
+      if (paths.length > 0) {
+        const added = await handleFileBatchAddition(paths);
+        if (added > 0) {
+          showToast(`تم لصق وإضافة ${paths.length} ملف بنجاح!`, 'success');
+        }
+        return;
+      }
+    }
+
+    // الحالة 2: لصق صورة خام (Raw Image/Screenshot من الحافظة)
+    if (window.electronAPI?.clipboard?.readImage) {
+      const clipboardImage = await window.electronAPI.clipboard.readImage();
+      if (clipboardImage && !clipboardImage.isEmpty) {
+        e.preventDefault();
+        const tempFilePath = await window.electronAPI.clipboard.saveTempImage(clipboardImage.dataUrl);
+        if (tempFilePath) {
+          await handleFileBatchAddition([tempFilePath]);
+          showToast('تم إدراج لقطة الشاشة من الحافظة وجاهزة للتحويل!', 'success');
+        }
+      }
+    }
+  });
 
   // 3. أزرار اختيار الملفات والمجلدات
   const handleSelectFiles = async () => {

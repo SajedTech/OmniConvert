@@ -25,8 +25,7 @@ directories:
   buildResources: build
 
 win:
-  companyName: "Sajed Tech"
-  fileDescription: "OmniConvert — High Performance Offline Media & Document Converter by Sajed Tech"
+  publisherName: "Sajed Tech"
   target:
     - target: nsis
       arch:

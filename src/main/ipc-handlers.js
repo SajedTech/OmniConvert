@@ -1,7 +1,7 @@
 // src/main/ipc-handlers.js
 const fs = require('fs');
 const path = require('path');
-const { ipcMain, dialog, shell } = require('electron');
+const { ipcMain, dialog, shell, clipboard, app } = require('electron');
 const db = require('./database');
 const queueManager = require('./queue-manager');
 const mediaEngine = require('./engines/media-engine');
@@ -406,6 +406,53 @@ function registerIpcHandlers(mainWindow) {
       }
     }
     return { success: false, error: 'بروتوكول غير مسموح' };
+  });
+
+  // 7.2 clipboard:read-image — فحص وقراءة الصورة من الحافظة وإرجاع dataUrl إن وُجدت
+  ipcMain.handle('clipboard:read-image', async () => {
+    try {
+      if (!clipboard || typeof clipboard.readImage !== 'function') {
+        return { isEmpty: true, dataUrl: null };
+      }
+      const img = clipboard.readImage();
+      if (!img || img.isEmpty()) {
+        return { isEmpty: true, dataUrl: null };
+      }
+      return {
+        isEmpty: false,
+        dataUrl: img.toDataURL()
+      };
+    } catch (err) {
+      return { isEmpty: true, dataUrl: null, error: err.message };
+    }
+  });
+
+  // 7.3 clipboard:save-temp-image — حفظ الصورة الخام في مجلد app.getPath('temp') كملف PNG وإرجاع مسار الملف
+  ipcMain.handle('clipboard:save-temp-image', async (event, payload) => {
+    try {
+      const dataUrl = (payload && typeof payload === 'object' && payload.dataUrl) ? payload.dataUrl : (typeof payload === 'string' ? payload : null);
+      let buffer = null;
+
+      if (dataUrl && typeof dataUrl === 'string' && dataUrl.startsWith('data:')) {
+        const base64Data = dataUrl.replace(/^data:image\/\w+;base64,/, '');
+        buffer = Buffer.from(base64Data, 'base64');
+      } else if (clipboard && typeof clipboard.readImage === 'function') {
+        const img = clipboard.readImage();
+        if (!img || img.isEmpty()) return null;
+        buffer = img.toPNG();
+      }
+
+      if (!buffer || buffer.length === 0) return null;
+
+      const tempDir = (app && typeof app.getPath === 'function') ? app.getPath('temp') : require('os').tmpdir();
+      const fileName = `omniconvert_clipboard_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.png`;
+      const filePath = path.join(tempDir, fileName);
+      await fs.promises.writeFile(filePath, buffer);
+      return filePath;
+    } catch (err) {
+      console.error('فشل حفظ صورة الحافظة المؤقتة:', err);
+      return null;
+    }
   });
 
   // 8. history:get — جلب السجل مع التقسيم الصفحي
